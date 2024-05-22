@@ -1,0 +1,51 @@
+trigger:
+  branches:
+    exclude:
+      - '*'
+
+pr:
+  branches:
+    include:
+      - '*'  # or specify the branches you want to include for PR builds
+
+pool:
+  name: 'az400m03l03a-pool'  # Change to your self-hosted agent pool name
+
+variables:
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}  # Expo token stored in Azure DevOps pipeline secrets
+  NODE_VERSION: '18.x'  # Specify the Node.js version you want to use
+
+stages:
+  - stage: PRPreview
+    jobs:
+      - job: Build
+        displayName: 'Build and Deploy Expo App for PR Preview'
+        pool:
+          name: 'az400m03l03a-pool'  # Change to your self-hosted agent pool name
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(NODE_VERSION)
+              checkLatest: true
+
+          - script: npm install -g expo-cli eas-cli
+            displayName: 'Install Expo CLI and EAS CLI'
+
+          - script: npm ci
+            displayName: 'Install npm dependencies'
+
+          - powershell: |
+              $env:EXPO_TOKEN = "$(EXPO_TOKEN)"
+            displayName: 'Set Expo token as environment variable'
+
+          - script: eas update --non-interactive --branch preview
+            displayName: 'Run EAS Update for PR Preview'
+
+          - script: eas build --platform all --non-interactive
+            displayName: 'Build the app with EAS'
+
+          # - script: eas submit --platform all --non-interactive
+          #   displayName: 'Submit the app to app stores with EAS (if applicable)'
+
+          # Optionally, you can add steps to notify about the preview build
+          # For example, you can send a message to a Slack channel or post a comment on the PR
