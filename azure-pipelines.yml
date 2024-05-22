@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    exclude:
+      - '*'
+
+pr:
+  branches:
+    include:
+      - '*'
+
+pool:
+  name: 'az400m03l03a-pool'
+
+variables:
+  EXPO_TOKEN: $(expoToken)
+  NODE_VERSION: '18.x'
+
+stages:
+  - stage: PRPreview
+    jobs:
+      - job: Build
+        displayName: 'Build and Deploy Expo App for PR Preview'
+        pool:
+          name: 'az400m03l03a-pool'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(NODE_VERSION)
+              checkLatest: true
+
+          - script: npm install -g expo-cli eas-cli
+            displayName: 'Install Expo CLI and EAS CLI'
+
+          - script: npm ci
+            displayName: 'Install npm dependencies'
+
+          - powershell: |
+              $env:EXPO_TOKEN = "$(EXPO_TOKEN)"
+            displayName: 'Set Expo token as environment variable'
+
+          - script: eas update --auto
+            displayName: 'Run EAS Update for PR Preview'
+
+          # - script: eas build --platform all --non-interactive
+          #   displayName: 'Build the app with EAS'
+
+          # - script: eas submit --platform all --non-interactive
+          #   displayName: 'Submit the app to app stores with EAS (if applicable)'

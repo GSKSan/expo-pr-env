@@ -31,6 +31,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "1c65e4ba-5a2f-40a4-9acc-3a5f2c0720d4"
+      }
+    },
+    "owner": "senthil.gopal"
   }
 }
