@@ -38,7 +38,7 @@ stages:
               $env:EXPO_TOKEN = "$(EXPO_TOKEN)"
             displayName: 'Set Expo token as environment variable'
 
-          - script: eas update --non-interactive --branch preview
+          - script: eas update --auto
             displayName: 'Run EAS Update for PR Preview'
 
           # - script: eas build --platform all --non-interactive
