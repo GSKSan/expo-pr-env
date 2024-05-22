@@ -41,8 +41,8 @@ stages:
           - script: eas update --non-interactive --branch preview
             displayName: 'Run EAS Update for PR Preview'
 
-          - script: eas build --platform all --non-interactive
-            displayName: 'Build the app with EAS'
+          # - script: eas build --platform all --non-interactive
+          #   displayName: 'Build the app with EAS'
 
           # - script: eas submit --platform all --non-interactive
           #   displayName: 'Submit the app to app stores with EAS (if applicable)'
